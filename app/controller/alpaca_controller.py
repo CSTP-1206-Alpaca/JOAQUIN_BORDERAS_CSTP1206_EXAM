@@ -1,7 +1,7 @@
-from flask import render_template, json
+from flask import render_template, json, jsonify
 
 # as the models file contains all the models, import what you need
-from app.models import Alpaca
+from app.models import Alpaca, alpaca_model
 
 class AlpacaController(object):
 
@@ -10,15 +10,17 @@ class AlpacaController(object):
     # alpacas from the database
     # CONDITIONS: If user specifies age, then must filter the list
     # RETURN: Return formatted Alpaca's to use for the view
-    def index(self):
-        return render_template("index.html")
+    def index(self, age=None):
+        results = alpaca_model.get_all(age)
+        return render_template("index.html", results=results, age=age)
     
     # TODO: Implement Profile
     # WHAT: Grabs the relevant Alpaca from the model and uses it to
     # display the profile for that alpaca from the database
     # RETURN: Return formatted Alpaca to use for the view
-    def profile(self):
-        return render_template("profile.html")
+    def profile(self, name):
+        results = alpaca_model.get(name)
+        return render_template("profile.html", results=results, contact=json.dumps(results['contact']), hobbies=results['hobbies'])
     
     # TODO: Implement Search
     # WHAT: Uses the data recieved to find the Alpaca from the data
